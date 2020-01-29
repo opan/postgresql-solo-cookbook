@@ -1,0 +1,97 @@
+---
+driver:
+  name: vagrant
+
+provisioner:
+  name: chef_zero
+  require_chef_omnibus: 12.19.36
+  client_rb:
+    environment: internal
+  environments_path: "test/environments"
+platforms:
+  - name: ubuntu-16.04
+
+suites:
+  - name: default-master
+    data_bags_path: "test/default/data_bags"
+    run_list:
+      - recipe[postgresql_wrapper_test::master]
+    attributes:
+      app_name: "gana_proctor"
+      gana_proctor:
+        postgresql:
+          version: "9.5"
+      postgresql:
+        extension:
+          install_partman: true
+          install_postgis: true
+      telegraf:
+         install_options: '-o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold'
+    driver:
+      network:
+        private_network:
+          ip: 10.0.0.2
+      vm_hostname: default-master
+  - name: default-slave
+    data_bags_path: "test/default/data_bags"
+    run_list:
+      - recipe[postgresql_wrapper_test::slave]
+    driver:
+      network:
+        private_network:
+          ip: 10.0.0.3
+      vm_hostname: default-slave
+    attributes:
+      telegraf:
+         install_options: '-o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold'
+      app_name: "gana_proctor"
+      gana_proctor:
+        postgresql:
+          version: "9.5"
+          master_ip: "10.0.0.2"
+      postgresql:
+        extension:
+          install_partman: true
+          install_postgis: true
+  - name: barito
+    data_bags_path: "test/default/data_bags"
+    run_list:
+      - recipe[postgresql_wrapper::_logging]
+    attributes:
+      app_name: "gana_proctor"
+      tags:
+        - "barito_app_group:GroupName"
+        - "barito:redis"
+      gana_proctor:
+        postgresql:
+          version: "10"
+      postgresql:
+        extension:
+          install_partman: true
+          install_postgis: true
+      telegraf:
+         install_options: '-o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold'
+    driver:
+      network:
+        private_network:
+          ip: 10.0.0.4
+  - name: barito_without_barito_tags
+    data_bags_path: "test/default/data_bags"
+    run_list:
+      - recipe[postgresql_wrapper::_logging]
+    attributes:
+      app_name: "gana_proctor"
+      gana_proctor:
+        postgresql:
+          version: "10"
+      postgresql:
+        extension:
+          install_partman: true
+          install_postgis: true
+      telegraf:
+         install_options: '-o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold'
+    driver:
+      network:
+        private_network:
+          ip: 10.0.0.5
+

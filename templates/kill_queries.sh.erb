@@ -1,0 +1,4 @@
+#!/bin/bash
+psql -Upostgres -d<%= @database_name %> -c "SELECT pid, query FROM  pg_stat_activity WHERE now() - query_start > '<%= @query_timeout %>'::interval AND state = 'active'" | grep -i "SELECT "  > /opt/queries.txt
+cat /opt/queries.txt >> /opt/running_list.txt
+cat /opt/queries.txt | awk -F "|" '{print "psql  -Upostgres -d<%= @database_name %> -c select pg_cancel_backend ("$1")"}' | sed -e "s/-c /-c '/g" -e "s/$/'/g" | /bin/bash
