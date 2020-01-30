@@ -1,3 +1,3 @@
-postgresql_wrapper_client node.app do
+postgresql_solo_client 'PostgreSQL' do
   version node['postgresql']['version']
 end

@@ -5,11 +5,11 @@ property :password, [String, nil], default: 'generate' # Set to nil if we do not
 default_action :setup
 
 action :setup do
-  postgresql_solo_client app do
+  postgresql_solo_client new_resource.app do
     version new_resource.version
   end
 
-  postgresql_server_install "Setup PostgreSQL Server" do
+  postgresql_server_install 'Setup PostgreSQL Server' do
     hba_file node['postgresql']['config']['hba_file']
     ident_file node['postgresql']['config']['ident_file']
     external_pid_file node['postgresql']['config']['external_pid_file']

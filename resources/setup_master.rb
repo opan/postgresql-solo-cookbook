@@ -11,13 +11,12 @@ property :replication_password, String
 default_action :setup
 
 action :setup do
-
-  postgresql_solo_server "#{new_resource.app}" do
+  postgresql_solo_server new_resource.app do
     version new_resource.version
-    password new_resoures.root_password
+    password new_resource.root_password
   end
 
-  postgresql_solo_setup_user "#{new_resource.app}" do
+  postgresql_solo_setup_user new_resource.app do
     replication new_resource.replication
     replication_password new_resource.replication_password
     database new_resource.database
@@ -25,6 +24,5 @@ action :setup do
     password new_resource.password
   end
 
-  postgresql_solo__laundry "#{new_resource.app}" do
-  end
+  postgresql_solo__laundry new_resource.app
 end
