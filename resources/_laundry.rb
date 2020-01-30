@@ -1,5 +1,4 @@
 property :app, String, name_property: true, required: true
-property :database_databag_name, String, default: "postgresql"
 
 default_action :setup
 

@@ -1,35 +1,30 @@
 property :app, String, name_property: true, required: true
 property :version, String, equal_to: ['9.4', '9.5', '9.6', '10', '11', '12'], required: true
-property :replicated,
-property :slave_search_query, String
-property :database_databag_name, String, default: "postgresql"
-property :database_username_variable, String, default: "username"
+property :root_password, [String, nil], default: 'generate' # Set to nil if we do not want to set a password
+property :database, String, required: true
+property :username, String, required: true
+property :password, String, required: true
+property :replication, kind_of: [TrueClass, FalseClass], default: false
+property :replication_username, String, default: "rep"
+property :replication_password, String
 
 default_action :setup
 
 action :setup do
-  unless slave_search_query.nil?
-    slave_node = search(:node, slave_search_query).first
-    unless slave_node.nil?
-      postgresql_solo_pghba_config app do
-        ip_address slave_node.ipaddress
-        database_databag_name new_resource.database_databag_name
-      end
-    end
-  end
 
-  postgresql_solo_server app do
+  postgresql_solo_server "#{new_resource.app}" do
     version new_resource.version
-    database_databag_name new_resource.database_databag_name
+    password new_resoures.root_password
   end
 
-  postgresql_solo_setup_user app do
-    replication !new_resource.slave_search_query.nil?
-    database_databag_name new_resource.database_databag_name
-    database_username_variable new_resource.database_username_variable
+  postgresql_solo_setup_user "#{new_resource.app}" do
+    replication new_resource.replication
+    replication_password new_resource.replication_password
+    database new_resource.database
+    username new_resource.username
+    password new_resource.password
   end
 
-  postgresql_solo__laundry app do
-    database_databag_name new_resource.database_databag_name
+  postgresql_solo__laundry "#{new_resource.app}" do
   end
 end

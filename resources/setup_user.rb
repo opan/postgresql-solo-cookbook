@@ -1,8 +1,10 @@
 property :app, String, name_property: true, required: true
-property :replication, kind_of: [TrueClass, FalseClass], default: false
 property :database, String, required: true
 property :username, String, required: true
 property :password, String, required: true
+property :replication, kind_of: [TrueClass, FalseClass], default: false
+property :replication_username, String, default: "rep"
+property :replication_password, String
 
 default_action :setup
 
@@ -25,8 +27,8 @@ action :setup do
   end
 
   if replication == true
-    postgresql_user "rep" do
-      password new_resource.password
+    postgresql_user new_resource.replication_username do
+      password new_resource.replication_password
       replication true
     end
   end
