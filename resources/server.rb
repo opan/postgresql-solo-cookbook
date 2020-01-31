@@ -16,7 +16,6 @@ action :setup do
     password new_resource.password
     port node['postgresql']['config']['port']
     version new_resource.version
-    action :create
   end
 
   # Setup pg_hba.conf
@@ -28,6 +27,12 @@ action :setup do
       access_addr item['addr']
       access_method item['method']
     end
+  end
+
+  service 'postgresql' do
+    service_name 'postgresql'
+    supports restart: true, status: true, reload: true
+    action %i[enable start]
   end
 
   # Calculate work memory
