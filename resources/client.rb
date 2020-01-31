@@ -1,4 +1,6 @@
-property :version, String, equal_to: ['9.4', '9.5', '10', '11', '12'], required: true
+include PostgresqlSoloCookbook::Constants
+
+property :version, String, equal_to: VERSIONS, required: true
 
 default_action :install
 

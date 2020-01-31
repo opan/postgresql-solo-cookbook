@@ -1,5 +1,7 @@
+include PostgresqlSoloCookbook::Constants
+
 property :app, String, name_property: true, required: true
-property :version, String, equal_to: ['9.4', '9.5', '9.6', '10', '11', '12'], required: true
+property :version, String, equal_to: VERSIONS, required: true
 property :password, [String, nil], default: 'generate' # Set to nil if we do not want to set a password
 
 default_action :setup
