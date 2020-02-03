@@ -4,6 +4,10 @@ driver:
 
 provisioner:
   name: chef_zero
+  nodes_path: 'test/nodes'
+  environments_path: 'test/environments'
+  client_rb:
+    environment: staging
 
 platforms:
   - name: ubuntu-16.04

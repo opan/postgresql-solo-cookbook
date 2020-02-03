@@ -1,0 +1,10 @@
+{
+  "id": "default-master-ubuntu-1604",
+  "run_list": ["recipe[postgresql_solo::master]"],
+  "chef_environment": "staging",
+  "normal": {},
+  "automatic": {
+    "ipaddress": "127.0.0.1",
+    "hostname": "localhost"
+  }
+}
