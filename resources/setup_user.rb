@@ -1,4 +1,5 @@
 property :app, String, name_property: true, required: true
+property :host, String, default: node['hostname']
 property :database, String, required: true
 property :username, String, required: true
 property :password, String, required: true
@@ -9,7 +10,7 @@ property :replication_password, String
 default_action :setup
 
 action :setup do
-  node_host = node['hostname']
+  node_host = new_resource.host
   if node['postgresql']['cloud_provider'] == 'aws'
     node_host = node['ipaddress']
   end
@@ -17,10 +18,6 @@ action :setup do
   postgresql_user "#{new_resource.username}" do
     password new_resource.password
     createdb true
-  end
-
-  if node_host.empty? || node_host.nil?
-    node_host = node['postgresql']['config']['host']
   end
 
   postgresql_database "#{new_resource.database}" do

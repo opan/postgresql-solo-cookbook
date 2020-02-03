@@ -3,6 +3,7 @@ include PostgresqlSoloCookbook::Constants
 property :app, String, name_property: true, required: true
 property :version, String, equal_to: VERSIONS, required: true
 property :root_password, [String, nil], default: 'generate' # Set to nil if we do not want to set a password
+property :host, String, default: node['hostname']
 property :database, String, required: true
 property :username, String, required: true
 property :password, String, required: true
@@ -21,6 +22,7 @@ action :setup do
   postgresql_solo_setup_user new_resource.app do
     replication new_resource.replication
     replication_password new_resource.replication_password
+    host new_resource.host
     database new_resource.database
     username new_resource.username
     password new_resource.password
