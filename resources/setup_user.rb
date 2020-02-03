@@ -9,15 +9,18 @@ property :replication_password, String
 default_action :setup
 
 action :setup do
-
-  node_host = node.hostname
-  if node['postgresql']['cloud_provider'] == "aws"
-    node_host = node.ipaddress
+  node_host = node['hostname']
+  if node['postgresql']['cloud_provider'] == 'aws'
+    node_host = node['ipaddress']
   end
 
   postgresql_user "#{new_resource.username}" do
     password new_resource.password
     createdb true
+  end
+
+  if node_host.empty? || node_host.nil?
+    node_host = node['postgresql']['config']['host']
   end
 
   postgresql_database "#{new_resource.database}" do
@@ -26,11 +29,10 @@ action :setup do
     port node['postgresql']['config']['port']
   end
 
-  if replication == true
-    postgresql_user new_resource.replication_username do
-      password new_resource.replication_password
-      replication true
-    end
+  postgresql_user new_resource.replication_username do
+    password new_resource.replication_password
+    replication true
+    only_if { new_resource.replication == true }
   end
 end
 

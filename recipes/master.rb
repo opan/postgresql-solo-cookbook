@@ -1,4 +1,4 @@
-postgresql_solo_setup_master 'Master Server' do
+postgresql_solo_setup_master 'postgresql' do
   version node['postgresql']['version']
   database 'test'
   username 'user_test'

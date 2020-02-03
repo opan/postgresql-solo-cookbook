@@ -7,6 +7,7 @@ default['postgresql']['config']['ident_file']                 = "/etc/postgresql
 default['postgresql']['config']['external_pid_file']          = "/var/run/postgresql/#{node['postgresql']['version']}-main.pid"
 default['postgresql']['config']['unix_socket_directories']    = '/var/run/postgresql'
 default['postgresql']['config']['data_directory']             = "/var/lib/postgresql/#{node['postgresql']['version']}/main"
+default['postgresql']['config']['host'] = 'localhost'
 default['postgresql']['config']['port']             = 5432
 
 default['postgresql']['network_config']['allowed_subnet']    = "127.0.0.1/32"
@@ -44,5 +45,3 @@ default['postgresql']['pg_hba'] = [
   {:type => 'host', :db => 'all', :user => 'all', :addr => "#{node["ipaddress"].split(".")[0]}.#{node["ipaddress"].split(".")[1]}.0.0/16", :method => 'md5'},
   {:type => 'host', :db => 'replication', :user => 'rep', :addr => "#{node["ipaddress"].split(".")[0]}.#{node["ipaddress"].split(".")[1]}.0.0/16", :method => 'trust'}
 ]
-
-

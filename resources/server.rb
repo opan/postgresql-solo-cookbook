@@ -7,8 +7,9 @@ property :password, [String, nil], default: 'generate' # Set to nil if we do not
 default_action :setup
 
 action :setup do
-  postgresql_solo_client new_resource.app do
+  postgresql_server_install 'Install PostgreSQL Server' do
     version new_resource.version
+    action :install
   end
 
   postgresql_server_install 'Setup PostgreSQL Server' do
@@ -18,6 +19,7 @@ action :setup do
     password new_resource.password
     port node['postgresql']['config']['port']
     version new_resource.version
+    action :create
   end
 
   # Setup pg_hba.conf
