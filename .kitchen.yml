@@ -3,7 +3,7 @@ driver:
   name: vagrant
 
 provisioner:
-  name: chef_zero
+  name: chef_solo
   nodes_path: 'test/nodes'
   environments_path: 'test/environments'
   client_rb:
@@ -20,3 +20,45 @@ suites:
   - name: default-master
     run_list:
       - recipe[postgresql_solo::master]
+    attributes:
+      postgresql:
+        replication: true
+        version: '9.5'
+        pg_hba_replica:
+          - type: host
+            db: replication
+            addr: '10.0.0.3/32'
+            method: md5
+          - type: host
+            db: replication
+            addr: '10.0.0.2/32'
+            method: md5
+
+  # {type: 'host', db: 'replication', user: node['postgresql']['config']['repuser'], addr: node['postgresql'], method: 'md5'},
+    driver:
+      network:
+        private_network:
+          ip: 10.0.0.2
+      vm_hostname: default-master
+
+  - name: default-slave
+    run_list:
+      - recipe[postgresql_solo::slave]
+    attributes:
+      postgresql:
+        version: '9.5'
+        config:
+          master_ip: 10.0.0.2
+        additional_config:
+          archive_mode: ~
+          archive_command: ~
+          hot_standby: 'on'
+    driver:
+      network:
+        private_network:
+          ip: 10.0.0.3
+      vm_hostname: default-slave
+
+  - name: testing
+    run_list:
+      - recipe[postgresql_solo::testing]

@@ -1,0 +1,3 @@
+<% @passwords.each do |pass| %>
+  <%= pass.hostname %>:<%= pass.port %>:<%= pass.database %>:<%= pass.username %>:<%= pass.password %>
+<% end %>

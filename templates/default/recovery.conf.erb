@@ -1,3 +1,6 @@
-standby_mode = '<%=@standby_mode%>'
-primary_conninfo = '<%=@primary_conninfo%>'
-trigger_file = '<%=@trigger_file%>'
+standby_mode = '<%= @standby_mode %>'
+primary_conninfo = '<%= @primary_conninfo %>'
+<% if !@restore_command.empty? || !@restore_command.nil? %>
+restore_command = '<%= @restore_command %>'
+<% end %>
+trigger_file = '<%= @trigger_file %>'
