@@ -33,8 +33,6 @@ suites:
             db: replication
             addr: '10.0.0.2/32'
             method: md5
-
-  # {type: 'host', db: 'replication', user: node['postgresql']['config']['repuser'], addr: node['postgresql'], method: 'md5'},
     driver:
       network:
         private_network:
@@ -50,8 +48,6 @@ suites:
         config:
           master_ip: 10.0.0.2
         additional_config:
-          archive_mode: ~
-          archive_command: ~
           hot_standby: 'on'
     driver:
       network:
