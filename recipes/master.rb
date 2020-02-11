@@ -12,20 +12,6 @@ postgresql_server_install 'postgresql' do
   action [:install, :create]
 end
 
-postgresql_server_conf 'Configure Postgresql Server' do
-  hba_file node['postgresql']['config']['hba_file']
-  ident_file node['postgresql']['config']['ident_file']
-  external_pid_file node['postgresql']['config']['external_pid_file']
-  data_directory data_directory
-
-  version node['postgresql']['version']
-  port node['postgresql']['config']['port']
-
-  additional_config node['postgresql']['additional_config']
-
-  notifies :reload, 'service[postgresql]'
-end
-
 node['postgresql']['pg_hba'].each do |item|
   postgresql_access 'default pg_hba access' do
     access_type item['type']
@@ -77,11 +63,32 @@ if node['postgresql']['replication'] == true
   end
 end
 
+postgresql_server_conf 'Configure Postgresql Server' do
+  hba_file node['postgresql']['config']['hba_file']
+  ident_file node['postgresql']['config']['ident_file']
+  external_pid_file node['postgresql']['config']['external_pid_file']
+  data_directory data_directory
+
+  version node['postgresql']['version']
+  port node['postgresql']['config']['port']
+
+  additional_config node['postgresql']['additional_config']
+
+  notifies :reload, 'service[postgresql]'
+end
+
+find_resource(:service, 'postgresql') do
+  extend PostgresqlCookbook::Helpers
+  service_name lazy { platform_service_name }
+  supports restart: true, status: true, reload: true
+  action [:enable, :start]
+end
+
 service 'postgresql' do
   extend PostgresqlCookbook::Helpers
   service_name lazy { platform_service_name }
   supports restart: true, status: true, reload: true
-  action :nothing
+  action :restart
 end
 
 postgresql_database node['postgresql']['config']['dbname'] do

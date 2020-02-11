@@ -32,7 +32,7 @@ default['postgresql']['replication'] = false
 default['postgresql']['config']['repuser'] = 'rep'
 default['postgresql']['config']['repuser_pass'] = 'securepassword'
 
-# This must be set when provision slave server
+# This must be set when setting up slave server
 default['postgresql']['config']['master_ip'] = nil
 
 default['postgresql']['additional_config']['archive_mode']                  = 'on'

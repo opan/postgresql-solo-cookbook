@@ -23,7 +23,7 @@ postgresql_server_conf 'Configure Postgresql Server' do
   version node['postgresql']['version']
   port node['postgresql']['config']['port']
 
-  additional_config node.override['postgresql']['additional_config']
+  additional_config node['postgresql']['additional_config']
 
   notifies :reload, 'service[postgresql]'
 end
@@ -74,6 +74,7 @@ execute 'Copy directory from master with pg_basebackup' do
   command "pg_basebackup -h #{master_ip} -U #{repuser} -D #{data_directory} -P"
   user 'postgres'
   group 'postgres'
+  only_if { ::Dir.empty?(data_directory) }
 end
 
 template "#{data_directory}/recovery.conf" do
@@ -95,7 +96,7 @@ service 'postgresql' do
   extend PostgresqlCookbook::Helpers
   service_name lazy { platform_service_name }
   supports restart: true, status: true, reload: true
-  action :nothing
+  action :restart
 end
 
 include_recipe 'postgresql_solo::_apt'
