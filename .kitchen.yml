@@ -13,15 +13,13 @@ platforms:
   - name: ubuntu-16.04
 
 suites:
-  - name: default-client
-    run_list:
-      - recipe[postgresql_solo::client]
-  
-  - name: default-master
+  - name: master
     run_list:
       - recipe[postgresql_solo::master]
     attributes:
       postgresql:
+        config:
+          dbname: transaction-history-service
         replication: true
         version: '9.5'
         pg_hba_replica:
@@ -39,7 +37,7 @@ suites:
           ip: 10.0.0.2
       vm_hostname: default-master
 
-  - name: default-slave
+  - name: slave-01
     run_list:
       - recipe[postgresql_solo::slave]
     attributes:
@@ -54,7 +52,3 @@ suites:
         private_network:
           ip: 10.0.0.3
       vm_hostname: default-slave
-
-  - name: testing
-    run_list:
-      - recipe[postgresql_solo::testing]
