@@ -2,33 +2,35 @@ include PostgresqlSoloCookbook::Constants
 
 property :app, String, name_property: true, required: true
 property :version, String, equal_to: VERSIONS, required: true
-property :root_password, [String, nil], default: 'generate' # Set to nil if we do not want to set a password
-property :host, String, default: node['postgresql']['config']['host']
-property :port, Integer, default: node['postgresql']['config']['port']
+property :host, [String, nil], default: nil
+property :port, Integer
 property :dbname, String, required: true
 property :dbpass, String, required: true
-property :username, String, required: true
-property :password, String, required: true
+property :dbuser, String, required: true
+property :dbuser_pass, String, required: true
 
 # Replication
 property :replication, kind_of: [TrueClass, FalseClass], default: false
-property :repuser, String, default: node['postgresql']['config']['repuser']
-property :repuser_pass, String, default: node['postgresql']['config']['repuser_pass']
+property :repuser, String, default: REPUSER
+property :repuser_pass, String, default: REPUSER_PASS
 
-property :hba_file, Array[Hash], required: true
-property :hba_file_replica, [Array], default: []
-property :ident_file, String, default: node['postgresql']['config']['ident_file']
-property :external_pid_file, String, default: node['postgresql']['config']['external_pid_file']
-property :additional_config, Hash, required: true
+property :hba_file, String
+property :ident_file, String
+property :external_pid_file, String
+property :additional_config, Hash
+property :data_directory, String
+
+property :pg_hba, kind_of: [Array, Hash], required: true
+property :pg_hba_replica, [Array, Hash], default: []
 
 default_action :setup
 
 action :setup do
   postgresql_server_install 'postgresql' do
-    hba_file node['postgresql']['config']['hba_file']
-    ident_file node['postgresql']['config']['ident_file']
-    external_pid_file node['postgresql']['config']['external_pid_file']
-    password node['postgresql']['config']['dbpass']
+    hba_file new_resource.hba_file
+    ident_file new_resource.ident_file
+    external_pid_file new_resource.external_pid_file
+    password new_resource.dbuser_pass
     port new_resource.port
     version new_resource.version
     setup_repo true
@@ -36,7 +38,7 @@ action :setup do
     action [:install, :create]
   end
 
-  new_resource.hba_file.each do |hba|
+  new_resource.pg_hba.each do |hba|
     postgresql_access 'default pg_hba access' do
       access_type hba['type']
       access_db hba['db']
@@ -48,9 +50,9 @@ action :setup do
     end
   end
 
-  postgresql_user new_resource.username do
+  postgresql_user new_resource.dbuser do
     superuser true
-    password new_resource.password
+    password new_resource.dbuser_pass
     sensitive true
   end
 
@@ -64,7 +66,7 @@ action :setup do
       sensitive true
     end
 
-    directory "#{data_directory}/archive/" do
+    directory "#{new_resource.data_directory}/archive/" do
       owner 'postgres'
       group 'postgres'
       recursive true
@@ -90,7 +92,7 @@ action :setup do
     hba_file new_resource.hba_file
     ident_file new_resource.ident_file
     external_pid_file new_resource.external_pid_file
-    data_directory data_directory
+    data_directory new_resource.data_directory
 
     version new_resource.version
     port new_resource.port
@@ -116,6 +118,7 @@ action :setup do
 
   postgresql_database new_resource.dbname do
     owner new_resource.dbuser
+    host new_resource.host
     port new_resource.port
   end
 end
