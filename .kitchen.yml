@@ -35,7 +35,7 @@ suites:
       network:
         private_network:
           ip: 10.0.0.2
-      vm_hostname: default-master
+      vm_hostname: master
 
   - name: slave-01
     run_list:
@@ -51,4 +51,4 @@ suites:
       network:
         private_network:
           ip: 10.0.0.3
-      vm_hostname: default-slave
+      vm_hostname: slave-01

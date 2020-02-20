@@ -1,5 +1,5 @@
 
-default['postgresql']['version']                              = '12'
+default['postgresql']['version']                              = '9.6'
 
 default['postgresql']['config']['dir']                        = "/etc/postgresql/#{node['postgresql']['version']}/main"
 default['postgresql']['config']['hba_file']                   = "/etc/postgresql/#{node['postgresql']['version']}/main/pg_hba.conf"
@@ -7,7 +7,7 @@ default['postgresql']['config']['ident_file']                 = "/etc/postgresql
 default['postgresql']['config']['external_pid_file']          = "/var/run/postgresql/#{node['postgresql']['version']}-main.pid"
 default['postgresql']['config']['unix_socket_directories']    = '/var/run/postgresql'
 default['postgresql']['config']['data_directory']             = "/var/lib/postgresql/#{node['postgresql']['version']}/main"
-default['postgresql']['config']['host']                       = 'localhost'
+default['postgresql']['config']['host']                       = nil
 default['postgresql']['config']['port']                       = 5432
 default['postgresql']['config']['dbname']                     = 'default-db'
 default['postgresql']['config']['dbpass']                     = 'securepassword'
@@ -48,13 +48,13 @@ default['postgresql']['additional_config']['hot_standby']                   = ni
 # In releases prior to 9.6, this parameter also allowed the values archive and hot_standby.
 # These are still accepted but mapped to replica.
 default['postgresql']['additional_config']['wal_level']                 = 'hot_standby'
-default['postgresql']['additional_config']['max_wal_senders']                = 8
-default['postgresql']['additional_config']['wal_keep_segments']              = 50
-default['postgresql']['additional_config']['log_connections']                = 'on'
-default['postgresql']['additional_config']['log_disconnections']             = 'on'
-default['postgresql']['additional_config']['log_checkpoints']                = 'on'
-default['postgresql']['additional_config']['log_lock_waits']                 = 'on'
-default['postgresql']['additional_config']['log_temp_files']                 = 0
+default['postgresql']['additional_config']['max_wal_senders']           = 8
+default['postgresql']['additional_config']['wal_keep_segments']         = 50
+default['postgresql']['additional_config']['log_connections']           = 'on'
+default['postgresql']['additional_config']['log_disconnections']        = 'on'
+default['postgresql']['additional_config']['log_checkpoints']           = 'on'
+default['postgresql']['additional_config']['log_lock_waits']            = 'on'
+default['postgresql']['additional_config']['log_temp_files']            = 0
 
 # In milliseconds
 default['postgresql']['additional_config']['log_min_duration_statement']     = 70

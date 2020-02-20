@@ -20,8 +20,8 @@ property :external_pid_file, String
 property :additional_config, Hash
 property :data_directory, String
 
-property :pg_hba, kind_of: [Array, Hash], required: true
-property :pg_hba_replica, [Array, Hash], default: []
+property :pg_hba, Array, required: true
+property :pg_hba_replica, Array, default: []
 
 default_action :setup
 
@@ -56,6 +56,7 @@ action :setup do
     sensitive true
   end
 
+  # Replication
   if new_resource.replication == true
     repuser = new_resource.repuser
 
